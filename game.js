@@ -12,7 +12,7 @@ function reset() {
   agentTrajectory = [];
   userWins = 0;
   agentWins = 0;
-  document.getElementById("reset-btn").style.display ="";
+  document.getElementById("reset-btn").style.display ="none";
   document.getElementById('image2').src = "img/defult.svg";
   changeBG("white")
   document.getElementById('agentScore').innerHTML = "Choose your action to start the game.";
