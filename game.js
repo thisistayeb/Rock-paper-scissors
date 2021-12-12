@@ -13,7 +13,7 @@ function reset() {
   userWins = 0;
   agentWins = 0;
   document.getElementById("reset-btn").style.display ="";
-  document.getElementById('image2').src = "/img/defult.svg";
+  document.getElementById('image2').src = "img/defult.svg";
   changeBG("white")
   document.getElementById('agentScore').innerHTML = "Choose your action to start the game.";
   document.getElementById('userScore').innerHTML = "";
@@ -109,7 +109,7 @@ function start(){
     changeBG("white")
     break;
   }
-  document.getElementById('image2').src = "/img/" + agent + ".svg";
+  document.getElementById('image2').src = "img/" + agent + ".svg";
   document.getElementById('agentScore').innerHTML = "Robot's Score: " + agentWins;
   document.getElementById('userScore').innerHTML = "Your Score: " + userWins;
   // changeBG("white")
