@@ -8,6 +8,43 @@ var lastWinner;
 var userTrajectory = [];
 var agentTrajectory = [];
 
+algNames =["rock", "scissors", "paper", random()]
+
+
+//Create random distribution of selected algorithms
+var weights = new Array(algNames.length).fill(1)
+
+//create result for each algorithm
+var result = new Array(algNames.length).fill(0)
+
+
+
+// this function get weighs and list, return agent by attntions to their weight
+function weighted_rand(weights, list) {
+  var sum = weights.reduce((a,b) => a+b,0);
+  var rand = Math.random() * sum;
+  var value = 0;
+  for (var i = 0; i < weights.length; i++){
+      value += weights[i];
+      if (value >= rand) {
+          return list[i] ;
+          break;
+      }
+  }
+}
+
+
+
+//Update Weight
+function updateWeight(){
+
+  var eta = userTrajectory.length * Math.log(result.length);
+  for(i=0; i < result.length; i++) {
+      weights[i] = Math.max(Math.exp( -1 * eta * (Math.max(...result) - result[i])),0.0001);
+
+  }
+}
+
 // Changing background of body
 function changeBG(color){
 
@@ -39,6 +76,9 @@ function reset() {
   document.getElementById('image2').src = "img/defult.svg";
   document.getElementById('agentScore').innerHTML = "Choose your action to start the game.";
   document.getElementById('userScore').innerHTML = "";
+  weights = Array(algNames.length).fill(1)
+  result = Array(algNames.length).fill(0)
+
 }
 
 // Uniform random functions on [Paper, Scissors and Rock]
@@ -99,14 +139,47 @@ function compare(agent, user){
   }
 }
 
+// element-wise multipication
+function mult(a,b){
+  return a.map((e,i) => e * b[i]);
+}
+
+
+// update result for each algorithms
+function updateResult(list_Actions){
+  for (i=0; i<list_Actions.length; i++) {
+      switch (compare(list_Actions[i],userChoice)){
+        case 0:
+          result[i] += 0;
+          break;
+
+        case 1:
+          console.log("1")
+
+          result[i] += 1;
+          break;
+      
+        case 2:
+          console.log("2")
+
+          result[i] -= 1;
+          break;
+      }
+    }
+  }
+
 
 //This function change the GUI and compare choices
 // 1. The "reset button" will appear
 // 2. agent plays her strategy
 // 3. compare functions show the winner and add the result in Trajectories
 function start(){
+  console.log(result);
+  console.log("VAZN-ha",weights);
+  let ra = random();
+  list_Actions = ["scissors", "paper", "rock", ra]
   document.getElementById("reset-btn").style.display =""
-  let agent = random()
+  let agent = weighted_rand(weights,list_Actions)
   let game = compare(agent, userChoice)
   userTrajectory.push(userChoice)
   agentTrajectory.push(agent)
@@ -128,9 +201,11 @@ function start(){
     changeBG("white")
     break;
   }
+  updateResult(list_Actions)
   document.getElementById('image2').src = "img/" + agent + ".svg";
   document.getElementById('agentScore').innerHTML = "Robot's Score: " + agentWins;
   document.getElementById('userScore').innerHTML = "Your Score: " + userWins;
+  updateWeight();
 }
 
 
