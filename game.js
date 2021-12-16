@@ -40,7 +40,7 @@ function updateWeight(){
 
   var eta = userTrajectory.length * Math.log(result.length);
   for(i=0; i < result.length; i++) {
-      weights[i] = Math.max(Math.exp( -1 * eta * (Math.max(...result) - result[i])),0.0001);
+      weights[i] = Math.max(Math.exp( -1 * eta * (Math.max(...result) - result[i])**2 ),0.0001);
 
   }
 }
@@ -101,6 +101,7 @@ function behavioral(){
     case 1:
       return lastPlayerMove;
       break;
+
     case 2:
       switch (lastPlayerMove){
         case "paper":
@@ -113,7 +114,7 @@ function behavioral(){
           return "paper"
           break;
       }
-      case 3:
+      case 0:
         return random()
         break;
   }
@@ -180,13 +181,11 @@ function updateResult(list_Actions){
           break;
 
         case 1:
-          console.log("1")
 
           result[i] += 1;
           break;
       
         case 2:
-          console.log("2")
 
           result[i] -= 1;
           break;
@@ -200,8 +199,6 @@ function updateResult(list_Actions){
 // 2. agent plays her strategy
 // 3. compare functions show the winner and add the result in Trajectories
 function start(){
-  console.log(result);
-  console.log("VAZN-ha",weights);
   let ra = random();
   let be = behavioral();
   list_Actions = ["scissors", "paper", "rock", ra, be]
