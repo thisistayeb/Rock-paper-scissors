@@ -40,8 +40,7 @@ function updateWeight(){
 
   var eta = userTrajectory.length * Math.log(result.length);
   for(i=0; i < result.length; i++) {
-      weights[i] = Math.max(Math.exp( -1 * eta * (Math.max(...result) - result[i])**2 ),0.0001);
-
+      weights[i] = Math.max(Math.exp( -1 * eta * (Math.max(...result) - result[i])**2 ),0.00001);
   }
 }
 
@@ -76,6 +75,8 @@ function reset() {
   document.getElementById('image2').src = "img/defult.svg";
   document.getElementById('agentScore').innerHTML = "Choose your action to start the game.";
   document.getElementById('userScore').innerHTML = "";
+  document.getElementById('round').innerHTML = "";
+
   weights = Array(algNames.length).fill(1)
   result = Array(algNames.length).fill(0)
 
@@ -235,6 +236,7 @@ function start(){
   document.getElementById('image2').src = "img/" + agent + ".svg";
   document.getElementById('agentScore').innerHTML = "Robot's Score: " + agentWins;
   document.getElementById('userScore').innerHTML = "Your Score: " + userWins;
+  document.getElementById('round').innerHTML = "Total Rounds: " + userTrajectory.length;
   updateWeight();
 }
 
