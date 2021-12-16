@@ -247,4 +247,3 @@ function scissors(){
   userChoice = "scissors"
   start()
 }
-console.log(behavioral())
