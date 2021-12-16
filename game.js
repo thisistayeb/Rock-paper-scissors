@@ -8,7 +8,7 @@ var lastWinner;
 var userTrajectory = [];
 var agentTrajectory = [];
 
-algNames =["rock", "scissors", "paper", random()]
+algNames = ["scissors", "paper", "rock", random(), "rock"]
 
 
 //Create random distribution of selected algorithms
@@ -89,9 +89,35 @@ function random() {
 }
 
 function behavioral(){
-// to do:
+  if (userTrajectory.length == 0) {
+    return random();
+  
+  }
+  else {
+  var lastPlayerMove = userTrajectory[userTrajectory.length -1]
+  var lastAgentMove = agentTrajectory[userTrajectory.length -1]
 
-
+  switch (compare(lastPlayerMove, lastAgentMove)){
+    case 1:
+      return lastPlayerMove;
+      break;
+    case 2:
+      switch (lastPlayerMove){
+        case "paper":
+          return "scissors"
+          break;
+        case "scissors":
+          return "rock"
+          break;
+        case "rock":
+          return "paper"
+          break;
+      }
+      case 3:
+        return random()
+        break;
+  }
+  }
 }
 
 // This function resturns 1 if agent wins and 2 for wining of the user,
@@ -177,7 +203,8 @@ function start(){
   console.log(result);
   console.log("VAZN-ha",weights);
   let ra = random();
-  list_Actions = ["scissors", "paper", "rock", ra]
+  let be = behavioral();
+  list_Actions = ["scissors", "paper", "rock", ra, be]
   document.getElementById("reset-btn").style.display =""
   let agent = weighted_rand(weights,list_Actions)
   let game = compare(agent, userChoice)
@@ -223,3 +250,4 @@ function scissors(){
   userChoice = "scissors"
   start()
 }
+console.log(behavioral())
