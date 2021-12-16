@@ -105,13 +105,19 @@ function behavioral(){
     case 2:
       switch (lastPlayerMove){
         case "paper":
-          return "scissors"
+          // Player will play "scissors"
+          return "rock"
+
           break;
         case "scissors":
-          return "rock"
+          //player will play "rock"
+          return "paper"
+
           break;
         case "rock":
-          return "paper"
+          // player will play "paper"
+          return "scissors"
+
           break;
       }
       case 0:
