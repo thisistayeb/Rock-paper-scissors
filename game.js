@@ -188,17 +188,17 @@ function start(){
     case 1:
     agentWins += 1
     lastWinner = "agent"
-    changeBG("#FF7F7F")
+    changeBG("#E6334D")
     break;
 
     case 2:
     userWins += 1
     lastWinner = "player"
-    changeBG("#62de72")
+    changeBG("#60A677")
     break;
 
     case 0:
-    changeBG("white")
+    changeBG("#ECDCC7")
     break;
   }
   updateResult(list_Actions)
