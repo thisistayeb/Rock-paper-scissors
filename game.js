@@ -8,7 +8,7 @@ var lastWinner;
 var userTrajectory = [];
 var agentTrajectory = [];
 
-algNames = ["scissors", "paper", "rock", random(), "rock"]
+algNames = ["scissors", "paper", "rock", random(), behavioral(), behavioral_attack()]
 
 
 //Create random distribution of selected algorithms
@@ -128,6 +128,51 @@ function behavioral(){
   }
 }
 
+function behavioral_attack(){
+  if (userTrajectory.length == 0) {
+    return random();
+  
+  }
+  else {
+  var lastPlayerMove = userTrajectory[userTrajectory.length -1]
+  var lastAgentMove = agentTrajectory[userTrajectory.length -1]
+
+  switch (compare(lastPlayerMove, lastAgentMove)){
+    case 2:
+      switch (lastAgentMove){
+        case "paper":
+          return "rock"
+          break;
+        case "scissors":
+          return "paper"
+
+          break;
+        case "rock":
+          return "scissors"
+          break;
+      }
+
+    case 1:
+      switch (lastPlayerMove){
+        case "paper":
+          return "rock"
+
+          break;
+        case "scissors":
+          return "paper"
+
+          break;
+        case "rock":
+          return "scissors"
+          break;
+      }
+      case 0:
+        return random()
+        break;
+  }
+  }
+}
+
 // This function resturns 1 if agent wins and 2 for wining of the user,
 // 0 for draw
 function compare(agent, user){
@@ -208,7 +253,8 @@ function updateResult(list_Actions){
 function start(){
   let ra = random();
   let be = behavioral();
-  list_Actions = ["scissors", "paper", "rock", ra, be]
+  let att = behavioral_attack()
+  list_Actions = ["scissors", "paper", "rock", ra, be, att]
   document.getElementById("reset-btn").style.display =""
   let agent = weighted_rand(weights,list_Actions)
   let game = compare(agent, userChoice)
@@ -236,7 +282,7 @@ function start(){
   document.getElementById('image2').src = "img/" + agent + ".svg";
   document.getElementById('agentScore').innerHTML = "Robot's Score: " + agentWins;
   document.getElementById('userScore').innerHTML = "Your Score: " + userWins;
-  document.getElementById('round').innerHTML = "Total Rounds: " + userTrajectory.length;
+  document.getElementById('round').innerHTML = "Draws: " + (userTrajectory.length - (agentWins+userWins));
   updateWeight();
 }
 
