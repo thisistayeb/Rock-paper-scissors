@@ -8,7 +8,7 @@ var lastWinner;
 var userTrajectory = [];
 var agentTrajectory = [];
 
-algNames = ["scissors", "paper", "rock", random(), behavioral(), behavioral_attack()]
+algNames = ["scissors", "paper", "rock", random(), behavioral(), behavioral_attack(), maximumLiklihood(userTrajectory)]
 
 
 //Create random distribution of selected algorithms
@@ -131,7 +131,6 @@ function behavioral(){
 function behavioral_attack(){
   if (userTrajectory.length == 0) {
     return random();
-  
   }
   else {
   var lastPlayerMove = userTrajectory[userTrajectory.length -1]
@@ -170,6 +169,37 @@ function behavioral_attack(){
         return random()
         break;
   }
+  }
+}
+
+
+
+function maximumLiklihood(trajectory) {
+  if (agentTrajectory.length == 0) {return random()}
+  else{
+
+    let rock_played = userTrajectory.filter(x => x === "rock").length / trajectory.length;
+    let paper_played = userTrajectory.filter(x => x === "paper").length / trajectory.length;
+
+    let rand = Math.random();
+    if (rand < rock_played) {
+      // agent plays ROCK
+      return "paper"
+    }
+    else if (rand < (paper_played + rock_played)) {
+      // agent plays Paper
+      return "scissors"
+    }
+    else{
+      // agent plays scissors
+      return "rock"
+    }
+}
+}
+
+function twoStepBack(){
+  if (agentTrajectory.length >= 2){
+
   }
 }
 
@@ -254,7 +284,8 @@ function start(){
   let ra = random();
   let be = behavioral();
   let att = behavioral_attack()
-  list_Actions = ["scissors", "paper", "rock", ra, be, att]
+  let maxLik = maximumLiklihood(userTrajectory)
+  list_Actions = ["scissors", "paper", "rock", ra, be, att, maxLik]
   document.getElementById("reset-btn").style.display =""
   let agent = weighted_rand(weights,list_Actions)
   let game = compare(agent, userChoice)
@@ -285,6 +316,8 @@ function start(){
   document.getElementById('round').innerHTML = "Draws: " + (userTrajectory.length - (agentWins+userWins));
   updateWeight();
 }
+
+
 
 
 
