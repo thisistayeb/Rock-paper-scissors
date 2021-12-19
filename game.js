@@ -8,37 +8,37 @@ var lastWinner;
 var userTrajectory = [];
 var agentTrajectory = [];
 
-algNames = ["scissors", "paper", "rock", random(), behavioral(), behavioral_attack(), maximumLiklihood(userTrajectory)]
+algNames = ["scissors", "paper", "rock", random(), behavioral(), behavioral_attack(), maximumLiklihood()]
 
 
-//Create random distribution of selected algorithms
+//Create random distribution of selected algorithms, initial with same amount value
 var weights = new Array(algNames.length).fill(1)
 
-//create result for each algorithm
+//Create result for each algorithm
 var result = new Array(algNames.length).fill(0)
 
 
 
-// this function get weighs and list, return agent by attntions to their weight
+// This function get weighs and list, return agent by attntions to their weight
 function weighted_rand(weights, list) {
-  var sum = weights.reduce((a,b) => a+b,0);
-  var rand = Math.random() * sum;
-  var value = 0;
+  let sum = weights.reduce((a,b) => a+b,0);
+  let rand = Math.random() * sum;
+  let value = 0;
   for (var i = 0; i < weights.length; i++){
       value += weights[i];
       if (value >= rand) {
           return list[i] ;
-          break;
+          // break;
       }
   }
 }
 
 
 
-//Update Weight
+//Update Weight Array
 function updateWeight(){
 
-  var eta = userTrajectory.length * Math.log(result.length);
+  let eta = userTrajectory.length * Math.log(result.length);
   for(i=0; i < result.length; i++) {
       weights[i] = Math.max(Math.exp( -1 * eta * (Math.max(...result) - result[i])**2 ),0.00001);
   }
@@ -60,11 +60,14 @@ function keyDownHandler(e) {
       paper();
   }
   else if (e.which == 51){// 3️⃣ Key
-    rock()
+    rock();
+  }
+  else if (e.which==48 ) { //  0️⃣ Key
+    reset();
   }
 }
 
-// This function It restores the initial state of games and GUI
+// This function It restores the initial state of games and reset the GUI
 function reset() {
   userTrajectory = [];
   agentTrajectory = [];
@@ -76,19 +79,19 @@ function reset() {
   document.getElementById('agentScore').innerHTML = "Choose your action to start the game.";
   document.getElementById('userScore').innerHTML = "";
   document.getElementById('round').innerHTML = "";
-
   weights = Array(algNames.length).fill(1)
   result = Array(algNames.length).fill(0)
-
 }
 
-// Uniform random functions on [Paper, Scissors and Rock]
+// Uniform random choice of [Paper, Scissors and Rock]
 function random() {
   const actions = ["rock", "paper", "scissors"];
   const random = Math.floor(Math.random() * actions.length);
   return  actions[random]
 }
 
+// This behavioral function is based on the
+//https://arxiv.org/pdf/1301.3238.pdf
 function behavioral(){
   if (userTrajectory.length == 0) {
     return random();
@@ -128,6 +131,7 @@ function behavioral(){
   }
 }
 
+// Best response to the player who assumes you play behavioral strategy
 function behavioral_attack(){
   if (userTrajectory.length == 0) {
     return random();
@@ -173,7 +177,7 @@ function behavioral_attack(){
 }
 
 
-
+// This function return best response accrording to "Maximum Likelihood" of the player
 function maximumLiklihood(trajectory) {
   if (agentTrajectory.length == 0) {return random()}
   else{
@@ -197,6 +201,7 @@ function maximumLiklihood(trajectory) {
 }
 }
 
+// TODO: if player two step repeated cycle 
 function twoStepBack(){
   if (agentTrajectory.length >= 2){
 
@@ -204,7 +209,7 @@ function twoStepBack(){
 }
 
 // This function resturns 1 if agent wins and 2 for wining of the user,
-// 0 for draw
+// and 0 for draw
 function compare(agent, user){
   switch (agent) {
     case "rock":
@@ -248,10 +253,10 @@ function compare(agent, user){
   }
 }
 
-// element-wise multipication
-function mult(a,b){
-  return a.map((e,i) => e * b[i]);
-}
+// // element-wise multipication
+// function mult(a,b){
+//   return a.map((e,i) => e * b[i]);
+// }
 
 
 // update result for each algorithms
@@ -272,26 +277,39 @@ function updateResult(list_Actions){
           result[i] -= 1;
           break;
       }
-    }
   }
+}
 
-
-//This function change the GUI and compare choices
+//This is the main function of game, This function play the game, compare the game, and also change the GUI of the game
 // 1. The "reset button" will appear
 // 2. agent plays her strategy
-// 3. compare functions show the winner and add the result in Trajectories
+// 3. compare functions show the winner and append results in Trajectories
 function start(){
+
+  // run algorithms and store their decision
   let ra = random();
   let be = behavioral();
   let att = behavioral_attack()
   let maxLik = maximumLiklihood(userTrajectory)
+
+  // This Array contains decisions of algorithms, first three elemnts are deterministic 
   list_Actions = ["scissors", "paper", "rock", ra, be, att, maxLik]
+
+  // Show the `reset button` by removing "display: none;"
   document.getElementById("reset-btn").style.display =""
+
+  // Computer decide randomly accoring weights of algorithms
   let agent = weighted_rand(weights,list_Actions)
+
+  // Play Agent's move VS. Player's move
   let game = compare(agent, userChoice)
+
+  // Append Agent and Player's move the their trajectory array
   userTrajectory.push(userChoice)
   agentTrajectory.push(agent)
 
+  // Depend on the result of game, update changing background to Green (#60A677) for winnig the player
+  // Red (#E6334D) the player lost, and Cream color (#ECDCC7) in case of Draw
   switch (game) {
     case 1:
     agentWins += 1
@@ -309,16 +327,19 @@ function start(){
     changeBG("#ECDCC7")
     break;
   }
+  // Update result of algorithms until this level of games
   updateResult(list_Actions)
+
+// Update Weight array based the result array
+  updateWeight();
+
+  // show image of Agent choice in the GUI
   document.getElementById('image2').src = "img/" + agent + ".svg";
   document.getElementById('agentScore').innerHTML = "Robot's Score: " + agentWins;
   document.getElementById('userScore').innerHTML = "Your Score: " + userWins;
   document.getElementById('round').innerHTML = "Draws: " + (userTrajectory.length - (agentWins+userWins));
-  updateWeight();
+ 
 }
-
-
-
 
 
 // functions for starting the game
