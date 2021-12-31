@@ -23,7 +23,6 @@ function weighted_rand(weights, list) {
       value += weights[i];
       if (value >= rand) {
           return list[i] ;
-          // break;
       }
   }
 }
